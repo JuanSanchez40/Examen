@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -10,20 +10,16 @@ import Profile from "./components/profile.component";
 
 function App() {
   const localSignUp = localStorage.getItem("signUp");
-  const localEmail = localStorage.getItem("email");
   const localLoginOn = localStorage.getItem("loginOn");
   const [showHome, setShowHome] = useState(false);
-  const [show, setShow] = useState(false);
+  
   const localUsername = localStorage.getItem("username");
 
   useEffect(() => {
     if (localSignUp) {
       setShowHome(true);
     }
-    if (localEmail) {
-      setShow(true);
-    }
-  });
+  },[localSignUp]);
 
   const logout = () => {
     localStorage.removeItem("signUp");
