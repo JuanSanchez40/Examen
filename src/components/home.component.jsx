@@ -17,37 +17,18 @@ function Home() {
   const [tempMin, setTempMin] = useState('');
 
   useEffect(() => {
-    getCoords();
-    onLoad();
-  }, []);
-
-  const getCoords = () => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const userArray = position.coords;
-      const ubicacion = {
-        latitud: userArray.latitude,
-        longitud: userArray.longitude,
-      };
-      localStorage.setItem("ubicacion", JSON.stringify(ubicacion));
-    });
-  };
-
-  const onLoad = () => {
-    navigator.geolocation.getCurrentPosition(fetchData);
-  };
-
-  const fetchData = (position) => {
-    const { latitude, longitude } = position.coords;
-    fetch(
-      `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${APP_ID}`
-    )
-      .then((response) => response.json())
-      .then((data) => setWeatherData(data));
-      
-  };
-
-  const setWeatherData = (data) => {
-    console.log(data);
+    const onLoad = () => {
+      navigator.geolocation.getCurrentPosition(fetchData);
+    };
+    const fetchData = (position) => {
+      const { latitude, longitude } = position.coords;
+      fetch(
+        `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${APP_ID}`
+      )
+        .then((response) => response.json())
+        .then((data) => setWeatherData(data));
+    };
+    const setWeatherData = (data) => {
       setLocation(data.name);
       setDate(getDate());
       setTemperatura(Math.floor(data.main.temp));
@@ -55,7 +36,17 @@ function Home() {
       setTempMin(data.main.temp_min);
       setHumedad(data.main.humidity);
       setDescription(data.weather[0].main);
+      
+      const userArray = data.coord;
+      const ubicacion = {
+      latitud: userArray.lat,
+      longitud: userArray.lon,
+    };
+    localStorage.setItem("ubicacion", JSON.stringify(ubicacion));
   };
+  setActual('https://pokeapi.co/api/v2/pokemon?limit=12&offset=0');
+  onLoad();
+  }, []);
 
   const getDate = () => {
     let date = new Date();
@@ -73,9 +64,9 @@ function Home() {
         <h3>Clima</h3>
         <p>Locación: {location}</p>
         <p>Fecha dia siguiente: {date}</p>
-        <p>Temp. Actual: {temperatura}</p>
-        <p>Temp. Min: {tempMin}</p>
-        <p>Temp. Max: {tempMax}</p>
+        <p>Temp. Actual: {temperatura} °C</p>
+        <p>Temp. Min: {tempMin} °C</p>
+        <p>Temp. Max: {tempMax} °C</p>
         <p>Humedad: {humedad}</p>
         <p>Descripción: {description}</p>
       </header>
