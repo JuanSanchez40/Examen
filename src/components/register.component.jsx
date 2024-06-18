@@ -16,8 +16,6 @@ function Register () {
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [messageSnackbar, setMessageSnackbar] = useState(false);
 
-  
-
   const handleOnChangeEmail = (value) => {
     if (!isEmail(value)) {
       setShowSnackbar(true);
@@ -26,11 +24,6 @@ function Register () {
       setShowSnackbar(true);
       setMessageSnackbar('Email valido.');
     }
-  };
-  
-  const handleOnChangeAge = value => {
-    const values = value.replace(/\D/g, "");
-    localStorage.setItem("edad", values);
   };
 
   const handleCloseSnackbar = () => {

@@ -1,36 +1,44 @@
-import React, { useRef,useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { withRouter } from '../common/with-router';
 
-const required = value => {
-  if (!value) {
-    return (
-      <div className="alert alert-danger" role="alert">
-        Este espacio no puede ir vacio!
-      </div>
-    );
-  }
-};
+import { Snackbar } from "@mui/material";
 
 function Login(props) {
   const email = useRef();
   const password = useRef();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const localEmail = localStorage.getItem("email");
   const localPassword = localStorage.getItem("password");
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [messageSnackbar, setMessageSnackbar] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setShowSnackbar(false);
+ };
 
   const handleSignIn = () => {
-    if (
-      email.current.value === localEmail &&
-      password.current.value === localPassword
-    ) {
-      localStorage.setItem("signUp", email.current.value);
-      localStorage.setItem("loginOn", true);
-      props.router.navigate("/home");
-      window.location.reload();
-    } else {
-      alert("Please Enter valid Credential");
+    console.log(email.current.value.length);
+    if(email.current.value.length === 0 || password.current.value.length === 0){
+      setShowSnackbar(true);
+      setMessageSnackbar('Los campos no pueden estar vacios, ingresa el email y contraseña correcta.');
+    }else{
+
+      if(email.current.value === localEmail){
+        if(password.current.value === localPassword){
+          localStorage.setItem("signUp", email.current.value);
+          localStorage.setItem("loginOn", true);
+          props.router.navigate("/home");
+          setLoading(true);
+          window.location.reload();
+        }else{
+          setShowSnackbar(true);
+          setMessageSnackbar('La contraseña es incorrecta.');
+        }
+        }else{
+          setShowSnackbar(true);
+          setMessageSnackbar('Email no encontrado.');
+        }
     }
   };
   
@@ -51,7 +59,6 @@ function Login(props) {
                 className="form-control"
                 name="email"
                 ref={email}
-                validations={[required]}
               />
             </div>
 
@@ -62,7 +69,6 @@ function Login(props) {
                 className="form-control"
                 name="password"
                 ref={password}
-                validations={[required]}
               />
             </div>
 
@@ -78,17 +84,18 @@ function Login(props) {
                 <span>Login</span>
               </button>
             </div>
-
-            {message && (
-              <div className="form-group">
-                <div className="alert alert-danger" role="alert">
-                  {message}
-                </div>
-              </div>
-            )}
-           
-         
         </div>
+        <Snackbar
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+        style={{ marginBottom: '14px' }}
+        open={showSnackbar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={messageSnackbar}
+        />
       </div>
     );
   
